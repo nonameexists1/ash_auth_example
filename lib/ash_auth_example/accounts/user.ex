@@ -26,6 +26,13 @@ defmodule AshAuthExample.Accounts.User do
           sender AshAuthExample.Accounts.User.Senders.SendPasswordResetEmail
         end
       end
+
+      magic_link do
+        identity_field :email
+        registration_enabled? false
+
+        sender AshAuthExample.Accounts.User.Senders.SendMagicLinkEmail
+      end
     end
 
     add_ons do
@@ -44,6 +51,29 @@ defmodule AshAuthExample.Accounts.User do
       argument :subject, :string, allow_nil?: false
       get? true
       prepare AshAuthentication.Preparations.FilterBySubject
+    end
+
+    read :sign_in_with_magic_link do
+      description "Sign in or register a user with magic link."
+
+      argument :token, :string do
+        description "The token from the magic link that was sent to the user"
+        allow_nil? false
+      end
+
+      prepare AshAuthentication.Strategy.MagicLink.SignInPreparation
+
+      metadata :token, :string do
+        allow_nil? false
+      end
+    end
+
+    action :request_magic_link do
+      argument :email, :ci_string do
+        allow_nil? false
+      end
+
+      run AshAuthentication.Strategy.MagicLink.Request
     end
 
     read :sign_in_with_password do
