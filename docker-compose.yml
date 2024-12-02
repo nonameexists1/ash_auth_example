@@ -1,0 +1,24 @@
+services:
+  # Our Phoenix container
+  web:
+    # The build parameters for this container.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: eksperimentas:1.1.1
+    command: bash -c "mix phx.server"
+    environment:
+      # Variables to connect to our Postgres server
+      PGUSER: postgres
+      PGPASSWORD: 'aaa'
+      PGDATABASE:  ash_auth_example_dev
+      PGPORT:  5432
+      PGHOST: host
+    ports:
+      # Mapping the port to make the Phoenix app accessible outside of the container
+      - "4008:4000"
+    volumes:
+      - .:/workspace
+# Define the volumes
+
+
